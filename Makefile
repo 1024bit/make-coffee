@@ -2,6 +2,10 @@ MAKECOFFEE_ROOT_DIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 MAKECOFFEE_SRC      = $(shell find src -name '*.coffee' -type f)
 MAKECOFFEE_TARGET   = $(MAKECOFFEE_SRC:src/%.coffee=target/%.js)
 
+# Our own dependencies
+$(MAKECOFFEE_ROOT_DIR)/node_modules: $(MAKECOFFEE_ROOT_DIR)/package.json
+	cd $(MAKECOFFEE_ROOT_DIR) && npm install
+
 # JS -> Coffee dependency
 target/%.js: src/%.coffee
 	@mkdir -p $(@D)
