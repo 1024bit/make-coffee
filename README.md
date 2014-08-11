@@ -1,5 +1,7 @@
 # Make coffee
 
+![logo](https://raw.github.com/TabDigital/make-coffee/master/logo.jpg)
+
 ## Setup
 
 - `npm install make-coffee`
