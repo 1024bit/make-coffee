@@ -20,8 +20,8 @@ coffee-clean:
 coffee-compile: node_modules #$(MAKECOFFEE_TARGET)
 	@echo Compiling coffee...
 	@echo PWD = `pwd`
-	@echo PATH = $PATH
-	@ls -la ./node_modules/.bin
+	@echo PATH = $(PATH)
+	@ls -la `pwd`/node_modules/.bin
 
 # Rebuild JS when Coffee source changes
 coffee-watch: $(MAKECOFFEE_ROOT_DIR)/node_modules coffee-compile
