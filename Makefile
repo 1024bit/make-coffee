@@ -19,6 +19,7 @@ coffee-clean:
 # Build all JS files
 coffee-compile: node_modules $(MAKECOFFEE_TARGET)
 	@echo Compiling coffee using `which coffee`
+	@coffee -v
 
 # Rebuild JS when Coffee source changes
 coffee-watch: $(MAKECOFFEE_ROOT_DIR)/node_modules coffee-compile
