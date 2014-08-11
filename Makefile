@@ -9,7 +9,7 @@ $(MAKECOFFEE_ROOT_DIR)/node_modules: $(MAKECOFFEE_ROOT_DIR)/package.json
 # JS -> Coffee dependency
 target/%.js: src/%.coffee
 	@mkdir -p $(@D)
-	@./node_modules/.bin/coffee -bcp $< > $@
+	@coffee -bcp $< > $@
 
 # Clean all compiled files
 coffee-clean:
@@ -17,11 +17,8 @@ coffee-clean:
 	@rm -rf target
 
 # Build all JS files
-coffee-compile: node_modules #$(MAKECOFFEE_TARGET)
-	@echo Compiling coffee...
-	@echo PWD = `pwd`
-	@echo PATH = $(PATH)
-	@ls -la `pwd`/node_modules/.bin
+coffee-compile: node_modules $(MAKECOFFEE_TARGET)
+	@echo Compiling coffee using `which coffee`
 
 # Rebuild JS when Coffee source changes
 coffee-watch: $(MAKECOFFEE_ROOT_DIR)/node_modules coffee-compile
