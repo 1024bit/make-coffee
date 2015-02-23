@@ -27,7 +27,7 @@ node_modules: package.json
 
 ## Source and output
 
-This `Makefile` expects your source to live in `./src`, and will output all JavaScript to `./target`.
+This `Makefile` expects your source to live in `./src`, and will output all JavaScript to `./target`. You can override this with the `MAKECOFFEE_SRC` and `MAKECOFFEE_TARGET` variables.
 
 Make sure that your `package.json` to point to the compiled `target` folder in the `main` or `scripts` section.
 
