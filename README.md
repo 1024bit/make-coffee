@@ -16,7 +16,7 @@ make coffee-watch     # rebuild JS code continuously
 make coffee-verify    # verify that the latest JS code was checked-in
 ```
 
-All these targets depend on your local `node_modules` being available,
+You can also call `make target` directly, if `target` is the name of your output folder. All these targets depend on your local `node_modules` being available,
 so it's a good idea to have the following target:
 
 ```Makefile
@@ -47,8 +47,8 @@ It will automatically pick up the right version of `coffee-script`, as defined i
 ```
 > make coffee-compile
 
-Compiling coffee using /Users/me/dev/my-project/node_modules/my-module/node_modules/.bin/coffee
-CoffeeScript version 1.7.1
+Using CoffeeScript version 1.8.0
+Done!
 ```
 
 ## Public and private packages
