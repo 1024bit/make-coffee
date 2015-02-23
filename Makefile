@@ -1,29 +1,32 @@
-MAKECOFFEE_ROOT_DIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 MAKECOFFEE_SRC      = $(shell find src -name '*.coffee' -type f)
 MAKECOFFEE_TARGET   = $(MAKECOFFEE_SRC:src/%.coffee=target/%.js)
+COFFEE_BIN          = node_modules/.bin/coffee
 
-# Our own dependencies
-$(MAKECOFFEE_ROOT_DIR)/node_modules: $(MAKECOFFEE_ROOT_DIR)/package.json
-	cd $(MAKECOFFEE_ROOT_DIR) && npm install
+target: $(MAKECOFFEE_TARGET)
 
-# JS -> Coffee dependency
-target/%.js: src/%.coffee
+# JS -> Coffee
+$(MAKECOFFEE_TARGET): $(MAKECOFFEE_SRC)
 	@mkdir -p $(@D)
-	@coffee -bcp $< > $@
+	@$(COFFEE_BIN) -bcp $< > $@
 
 # Clean all compiled files
-coffee-clean:
+coffee-clean: node_modules
 	@echo Cleaning compiled coffee code
 	@rm -rf target
 
 # Build all JS files
 coffee-compile: node_modules $(MAKECOFFEE_TARGET)
-	@echo Compiling coffee using `which coffee`
-	@coffee -v
+	@echo Compiling coffee using $(COFFEE_BIN)
+	@$(COFFEE_BIN) -v
 
 # Rebuild JS when Coffee source changes
-coffee-watch: $(MAKECOFFEE_ROOT_DIR)/node_modules coffee-compile
+coffee-watch: coffee-compile
 	@echo Watching for coffee source changes
-	@$(MAKECOFFEE_ROOT_DIR)/node_modules/.bin/nodemon --exec "make coffee-compile" --watch src --ext coffee
+	@$(COFFEE_BIN) --output target --watch --compile src
 
-.PHONY: coffee-clean coffee-compile coffee-watch
+# verify that the checked-in JS matches the latest Coffee code
+coffee-verify: node_modules
+	@$(COFFEE_BIN) --output target-latest --compile src
+	@diff target target-latest
+
+.PHONY: coffee-clean coffee-compile coffee-watch coffee-verify

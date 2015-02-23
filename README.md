@@ -1,10 +1,10 @@
 # Make coffee
 
-![logo](https://raw.github.com/TabDigital/make-coffee/master/logo.jpg)
+![logo](logo.jpg)
 
 ## Setup
 
-- `npm install make-coffee`
+- `npm install make-coffee --save-dev`
 - Add `include node_modules/make-coffee/Makefile` to your Makefile
 
 Then you can run the following from your project directory:
@@ -13,19 +13,27 @@ Then you can run the following from your project directory:
 make coffee-clean     # clean the target output folder
 make coffee-compile   # build all Coffee into JS
 make coffee-watch     # rebuild JS code continuously
+make coffee-verify    # verify that the latest JS code was checked-in
+```
+
+All these targets depend on your local `node_modules` being available,
+so it's a good idea to have the following target:
+
+```Makefile
+node_modules: package.json
+  @npm install
+  touch node_modules
 ```
 
 ## Source and output
 
 This `Makefile` expects your source to live in `./src`, and will output all JavaScript to `./target`.
-You probably want to make the following changes to your project:
 
-- add `/target` to `.gitignore`
-- modify your `package.json` to point to the compiled target
+Make sure that your `package.json` to point to the compiled `target` folder in the `main` or `scripts` section.
 
 ```json
 {
-  "main": "target/index.js"
+  "main": "target/index.js",
   "scripts": {
     "start": "node target/server.js"
   }
@@ -34,8 +42,7 @@ You probably want to make the following changes to your project:
 
 ## Which version of coffee-script?
 
-It will automatically pick up the right version of `coffee-script`, as defined in your `package.json`.
-It also prints this information before compiling:
+It will automatically pick up the right version of `coffee-script`, as defined in your package's `devDependencies`. It prints this information before compiling:
 
 ```
 > make coffee-compile
@@ -43,17 +50,6 @@ It also prints this information before compiling:
 Compiling coffee using /Users/me/dev/my-project/node_modules/my-module/node_modules/.bin/coffee
 CoffeeScript version 1.7.1
 ```
-
-Depending on your setup, `coffee-script` might be deduped and run from somewhere else, for example
-
-```
-> make coffee-compile
-
-Compiling coffee using /Users/me/dev/my-project/node_modules/.bin/coffee
-CoffeeScript version 1.7.1
-```
-
-This depends on which version you specified, and how specific you are with the dependency (`1.7.1` vs `~1.7.1` vs `>1.7`, etc).
 
 ## Public and private packages
 
@@ -76,16 +72,10 @@ This means:
 
 - Private modules
 
-If you point to some modules straight from Github, with `https` + `oauth` for example, there is no publishing step.
-The simplest way is to compile these at install time.
+If you point to some modules straight from Github, with `https` + `oauth` for example, there is no publishing step. The simplest & most reliable way is to check-in the compiled `JavaScript` code.
 
-1. make `coffee-script` and `make-coffee` actual dependencies
-2. create an `install` task in `package.json`
+*Note:* it's **not** recommended to run CoffeeScript at runtime for sub-modules, since we lose control over the runtime version. We also avoid compiling as part of the `install` step, since this forces clients to download the `coffee-script` module and `npm dedupe` can cause `PATH` issues.
 
-```json
-{
-  "scripts": {
-    "install": "make coffee-compile"
-  }
-}
-```
+- 1. make `coffee-script` and `make-coffee` dev-only dependencies
+- 2. run `coffee-compile` locally. Ideally this should be a dependency of your tests target
+- 3. get your CI server (e.g. [Travis](https://travis-ci.org)) to run `make coffee-verify` to ensure the latest `JS` was checked-in
